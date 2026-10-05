@@ -2,52 +2,97 @@ const BOXES = {
   street: {
     cost: 25,
     items: [
-      ["Used Headphones","Common",6,18,46,"●"],
-      ["Retro Controller","Uncommon",18,38,29,"◆"],
-      ["Holo Collectible","Rare",40,85,17,"★"],
-      ["Limited Sneaker","Ultra",90,180,8,"✦"]
+      ["Used Headphones","Common",6,18,46,"●","Tech"],
+      ["Retro Controller","Uncommon",18,38,29,"◆","Gaming"],
+      ["Holo Collectible","Rare",40,85,17,"★","Collectibles"],
+      ["Limited Sneaker","Ultra",90,180,8,"✦","Fashion"]
     ]
   },
   collector: {
     cost: 75,
     items: [
-      ["Retro Console","Uncommon",40,75,25,"◆"],
-      ["Full-Art Collectible","Rare",70,145,40,"★"],
-      ["Signed Jersey","Ultra",150,310,27,"✦"],
-      ["Vintage Grail","Jackpot",320,600,8,"♛"]
+      ["Retro Console","Uncommon",40,75,25,"◆","Gaming"],
+      ["Full-Art Collectible","Rare",70,145,40,"★","Collectibles"],
+      ["Signed Jersey","Ultra",150,310,27,"✦","Sports"],
+      ["Vintage Grail","Jackpot",320,600,8,"♛","Vintage"]
     ]
   },
   vault: {
     cost: 200,
     items: [
-      ["Premium Collectible","Rare",140,240,22,"★"],
-      ["Luxury Flip","Ultra",220,480,41,"✦"],
-      ["Vintage Grail","Jackpot",500,950,29,"♛"],
-      ["Legendary Find","Mythic",1100,2000,8,"⚡"]
+      ["Premium Collectible","Rare",140,240,22,"★","Collectibles"],
+      ["Luxury Flip","Ultra",220,480,41,"✦","Luxury"],
+      ["Vintage Grail","Jackpot",500,950,29,"♛","Vintage"],
+      ["Legendary Find","Mythic",1100,2000,8,"⚡","Mythic"]
     ]
   }
 };
 
+const ALL_NAMES = [...new Set(Object.values(BOXES).flatMap(b => b.items.map(x => x[0])))];
+
 let state = load() || {
-  cash: 120,
+  cash: 150,
   level: 1,
   upgrades: 0,
   opened: 0,
   sold: 0,
   best: 0,
   nextId: 1,
-  inventory: []
+  inventory: [],
+  discovered: [],
+  claimedMissions: [],
+  lastDaily: null,
+  market: {
+    Tech: 1,
+    Gaming: 1,
+    Collectibles: 1,
+    Fashion: 1,
+    Sports: 1,
+    Vintage: 1,
+    Luxury: 1,
+    Mythic: 1
+  }
 };
 
 const $ = id => document.getElementById(id);
 const money = n => "$" + Math.round(n).toLocaleString();
 
+const MISSIONS = [
+  { id:"open5", label:"Open 5 boxes", reward:60, done:()=>state.opened>=5 },
+  { id:"sell5", label:"Sell 5 items", reward:75, done:()=>state.sold>=5 },
+  { id:"discover4", label:"Discover 4 item types", reward:100, done:()=>state.discovered.length>=4 },
+  { id:"worth1000", label:"Reach $1,000 net worth", reward:150, done:()=>netWorth()>=1000 }
+];
+
+function todayKey(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function canClaimDaily(){
+  return state.lastDaily !== todayKey();
+}
+
+function claimDaily(){
+  if(!canClaimDaily()) return;
+  const reward = 75 + Math.floor(Math.random()*76);
+  state.cash += reward;
+  state.lastDaily = todayKey();
+  $("dailyStatus").textContent = `Daily reward claimed: ${money(reward)}`;
+  save();
+  render();
+}
+
 function saleMultiplier() {
   return 1 + state.upgrades * 0.08;
 }
 
+function marketMultiplier(item){
+  return state.market[item.category] || 1;
+}
+
 function saleValue(item) {
-  return Math.round(item.value * saleMultiplier());
+  return Math.max(1, Math.round(item.value * saleMultiplier() * marketMultiplier(item)));
 }
 
 function netWorth() {
@@ -68,9 +113,17 @@ function pick(table) {
         name: row[0],
         rarity: row[1],
         value: Math.round(row[2] + Math.random() * (row[3] - row[2])),
-        mark: row[5]
+        mark: row[5],
+        category: row[6]
       };
     }
+  }
+}
+
+function shiftMarket(){
+  for(const key of Object.keys(state.market)){
+    const change = (Math.random() * 0.18) - 0.09;
+    state.market[key] = Math.min(1.35, Math.max(0.72, state.market[key] + change));
   }
 }
 
@@ -80,19 +133,26 @@ function openBox(type) {
 
   state.cash -= box.cost;
   state.opened++;
+  shiftMarket();
 
   const item = pick(box.items);
   item.id = state.nextId++;
   state.inventory.push(item);
   state.best = Math.max(state.best, item.value);
 
-  $("reveal").innerHTML = `
+  if(!state.discovered.includes(item.name)) state.discovered.push(item.name);
+
+  const reveal = $("reveal");
+  reveal.classList.remove("hit");
+  void reveal.offsetWidth;
+  reveal.classList.add("hit");
+  reveal.innerHTML = `
     <div>
       <div class="symbol">${item.mark}</div>
       <div class="name">${item.name}</div>
-      <div class="rarity">${item.rarity}</div>
+      <div class="rarity rarity-${item.rarity}">${item.rarity}</div>
       <div class="value">${money(item.value)}</div>
-      <small>Estimated resale value</small>
+      <small>Base value · current market ${Math.round(marketMultiplier(item)*100)}%</small>
     </div>`;
 
   save();
@@ -129,16 +189,64 @@ function upgrade() {
   render();
 }
 
+function claimMission(id){
+  const mission = MISSIONS.find(m=>m.id===id);
+  if(!mission || !mission.done() || state.claimedMissions.includes(id)) return;
+  state.claimedMissions.push(id);
+  state.cash += mission.reward;
+  save();
+  render();
+}
+
 function save() {
-  localStorage.setItem("flipShopSave", JSON.stringify(state));
+  localStorage.setItem("flipShopSaveV2", JSON.stringify(state));
 }
 
 function load() {
   try {
-    return JSON.parse(localStorage.getItem("flipShopSave"));
+    return JSON.parse(localStorage.getItem("flipShopSaveV2"));
   } catch {
     return null;
   }
+}
+
+function renderMarket(){
+  const categories = ["Collectibles","Gaming","Sports","Vintage"];
+  $("marketList").innerHTML = categories.map(cat=>{
+    const value = state.market[cat] || 1;
+    const pct = Math.round((value-1)*100);
+    const cls = pct >= 0 ? "positive" : "negative";
+    const sign = pct >= 0 ? "+" : "";
+    return `<div class="market-row"><span>${cat}</span><strong class="${cls}">${sign}${pct}%</strong></div>`;
+  }).join("");
+}
+
+function renderMissions(){
+  $("missions").innerHTML = "";
+  MISSIONS.forEach(m=>{
+    const claimed = state.claimedMissions.includes(m.id);
+    const complete = m.done();
+    const row = document.createElement("div");
+    row.className = "mission";
+    const text = document.createElement("div");
+    text.innerHTML = `<strong>${claimed ? "✓ " : complete ? "★ " : "○ "}${m.label}</strong><div class="muted">Reward ${money(m.reward)}</div>`;
+    const btn = document.createElement("button");
+    btn.textContent = claimed ? "Claimed" : complete ? "Claim" : "Locked";
+    btn.disabled = claimed || !complete;
+    btn.addEventListener("click",()=>claimMission(m.id));
+    row.append(text,btn);
+    $("missions").appendChild(row);
+  });
+}
+
+function renderCollection(){
+  $("collectionBook").innerHTML = ALL_NAMES.map(name=>{
+    const unlocked = state.discovered.includes(name);
+    return `<div class="collectible ${unlocked ? "" : "locked"}">
+      <strong>${unlocked ? "✓" : "?"} ${unlocked ? name : "Undiscovered"}</strong>
+      <small>${unlocked ? "Added to collection" : "Keep opening boxes"}</small>
+    </div>`;
+  }).join("");
 }
 
 function render() {
@@ -146,10 +254,12 @@ function render() {
   $("worth").textContent = money(netWorth());
   $("level").textContent = state.level;
   $("best").textContent = state.best ? money(state.best) : "—";
-  $("progressText").textContent = `${state.opened} boxes opened · ${state.sold} items sold`;
+  $("openedCount").textContent = `${state.opened} opened`;
+  $("progressText").textContent = `${state.opened} boxes opened · ${state.sold} sold · ${state.discovered.length}/${ALL_NAMES.length} discovered`;
 
   const progress = Math.min(100, (netWorth() / 10000) * 100);
   $("meterFill").style.width = progress + "%";
+  $("winText").textContent = netWorth() >= 10000 ? "🏆 You built a $10,000 flipping empire." : "";
 
   $("upgradeBtn").textContent = `Upgrade — ${money(upgradeCost())}`;
   $("upgradeBtn").disabled = state.cash < upgradeCost();
@@ -159,28 +269,41 @@ function render() {
     btn.disabled = state.cash < BOXES[btn.dataset.box].cost;
   });
 
+  $("dailyBtn").disabled = !canClaimDaily();
+  $("dailyBtn").textContent = canClaimDaily() ? "Claim daily" : "Claimed";
+  if(!canClaimDaily() && !$("dailyStatus").textContent){
+    $("dailyStatus").textContent = "Come back tomorrow for another reward.";
+  }
+
   const inv = $("inventory");
   inv.innerHTML = "";
+  $("inventoryMeta").textContent = `${state.inventory.length} item${state.inventory.length===1?"":"s"}`;
 
   if (!state.inventory.length) {
-    inv.innerHTML = `<div class="empty">Nothing in inventory yet.</div>`;
+    inv.innerHTML = `<div class="muted">Nothing in inventory yet.</div>`;
   } else {
     [...state.inventory].reverse().forEach(item => {
       const row = document.createElement("div");
       row.className = "item";
+      const current = saleValue(item);
+      const marketPct = Math.round((marketMultiplier(item)-1)*100);
       row.innerHTML = `
         <div>
-          <strong>${item.mark} ${item.name}</strong>
-          <small>${item.rarity} · base value ${money(item.value)}</small>
+          <strong class="rarity-${item.rarity}">${item.mark} ${item.name}</strong>
+          <small>${item.rarity} · base ${money(item.value)} · market ${marketPct>=0?"+":""}${marketPct}%</small>
         </div>`;
 
       const btn = document.createElement("button");
-      btn.textContent = `Sell ${money(saleValue(item))}`;
+      btn.textContent = `Sell ${money(current)}`;
       btn.addEventListener("click", () => sellOne(item.id));
       row.appendChild(btn);
       inv.appendChild(row);
     });
   }
+
+  renderMarket();
+  renderMissions();
+  renderCollection();
 }
 
 document.querySelectorAll(".box").forEach(btn => {
@@ -189,9 +312,12 @@ document.querySelectorAll(".box").forEach(btn => {
 
 $("upgradeBtn").addEventListener("click", upgrade);
 $("sellAllBtn").addEventListener("click", sellAll);
+$("dailyBtn").addEventListener("click", claimDaily);
 $("resetBtn").addEventListener("click", () => {
-  localStorage.removeItem("flipShopSave");
-  location.reload();
+  if(confirm("Reset all Flip Shop progress?")){
+    localStorage.removeItem("flipShopSaveV2");
+    location.reload();
+  }
 });
 
 render();
