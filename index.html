@@ -1,156 +1,111 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0b1020" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080d18">
   <title>Flip Shop</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="app">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">FLIP SHOP</p>
-        <h1>Find it. Flip it. Flex it.</h1>
-        <p class="sub">Build a collection, chase grails, and grow your shop.</p>
+<main class="app">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">FLIP SHOP</p>
+      <h1>Find it. Flip it. <span>Flex it.</span></h1>
+      <p class="sub">Crack drops, discover collectible variants, and build the ultimate shelf.</p>
+    </div>
+    <button id="resetBtn" class="ghost">↻ Reset</button>
+  </header>
+
+  <section class="stats">
+    <article><small>Cash</small><strong id="cash">$175</strong></article>
+    <article><small>Net worth</small><strong id="worth">$175</strong></article>
+    <article><small>Shop level</small><strong id="level">1</strong></article>
+    <article><small>Best pull</small><strong id="best">—</strong></article>
+  </section>
+
+  <section class="daily">
+    <div>
+      <p class="eyebrow">DAILY DROP</p>
+      <h2>Today's freebie</h2>
+      <p id="dailyStatus">A little bankroll boost is waiting.</p>
+    </div>
+    <button id="dailyBtn" class="primary">Claim reward</button>
+  </section>
+
+  <section class="panel">
+    <div class="section-head">
+      <div><p class="eyebrow">STOCK ROOM</p><h2>Pick a drop</h2></div>
+      <span class="pill" id="openedCount">0 opened</span>
+    </div>
+
+    <div class="boxes">
+      <button class="box street" data-box="street">
+        <div class="crate-art"><span>FS</span></div>
+        <div><b>Street Drop</b><strong>$25</strong><small>Common → Ultra</small></div>
+      </button>
+      <button class="box collector" data-box="collector">
+        <div class="crate-art diamond">✦</div>
+        <div><b>Collector Drop</b><strong>$75</strong><small>Uncommon → Jackpot</small></div>
+      </button>
+      <button class="box vault" data-box="vault">
+        <div class="crate-art crown">♛</div>
+        <div><b>Vault Drop</b><strong>$200</strong><small>Rare → Mythic</small></div>
+      </button>
+    </div>
+
+    <div id="stage" class="stage">
+      <div class="stage-copy">
+        <span>READY TO RIP</span>
+        <h3>Choose a drop above</h3>
+        <p>Your pull will appear here.</p>
       </div>
-      <button id="resetBtn" class="icon-btn">↻ Reset</button>
-    </header>
+    </div>
+  </section>
 
-    <section class="stats">
-      <div class="stat-card"><span>Cash</span><strong id="cash">$150</strong></div>
-      <div class="stat-card"><span>Net worth</span><strong id="worth">$150</strong></div>
-      <div class="stat-card"><span>Shop level</span><strong id="level">1</strong></div>
-      <div class="stat-card"><span>Best pull</span><strong id="best">—</strong></div>
-    </section>
-
-    <section class="daily-card">
-      <div>
-        <p class="eyebrow">DAILY DROP</p>
-        <h2>Free cash waiting</h2>
-        <p id="dailyStatus">Claim your reward for today.</p>
-      </div>
-      <button id="dailyBtn" class="primary">Claim daily</button>
-    </section>
-
+  <section class="split">
     <section class="panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">OPEN STOCK</p>
-          <h2>Choose your drop</h2>
-        </div>
-        <div class="pill" id="openedCount">0 opened</div>
-      </div>
-
-      <div class="boxes">
-        <button class="box-card street" data-box="street">
-          <div class="box-icon">📦</div>
-          <div>
-            <strong>Street Box</strong>
-            <span>$25</span>
-            <small>Common → Ultra</small>
-          </div>
-        </button>
-
-        <button class="box-card collector" data-box="collector">
-          <div class="box-icon">✨</div>
-          <div>
-            <strong>Collector Box</strong>
-            <span>$75</span>
-            <small>Uncommon → Jackpot</small>
-          </div>
-        </button>
-
-        <button class="box-card vault" data-box="vault">
-          <div class="box-icon">👑</div>
-          <div>
-            <strong>Vault Box</strong>
-            <span>$200</span>
-            <small>Rare → Mythic</small>
-          </div>
-        </button>
-      </div>
-
-      <div id="reveal" class="reveal idle">
-        <div class="reveal-inner">
-          <div class="reveal-symbol">?</div>
-          <div class="reveal-name">Your next pull</div>
-          <div class="reveal-rarity">Open a box to reveal it</div>
-        </div>
-      </div>
+      <div class="section-head"><div><p class="eyebrow">MISSIONS</p><h2>Quick wins</h2></div></div>
+      <div id="missions" class="stack"></div>
     </section>
-
-    <section class="two-col">
-      <div class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">MISSIONS</p>
-            <h2>Quick wins</h2>
-          </div>
-        </div>
-        <div id="missions" class="mission-list"></div>
-      </div>
-
-      <div class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">MARKET</p>
-            <h2>What’s moving</h2>
-          </div>
-        </div>
-        <div id="marketList" class="market-list"></div>
-      </div>
-    </section>
-
     <section class="panel">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">INVENTORY</p>
-          <h2>Your pulls</h2>
-          <p id="inventoryMeta">0 items</p>
-        </div>
-        <button id="sellAllBtn" class="secondary">Sell all</button>
-      </div>
-      <div id="inventory" class="inventory"></div>
+      <div class="section-head"><div><p class="eyebrow">MARKET</p><h2>Heat check</h2></div></div>
+      <div id="marketList" class="stack"></div>
     </section>
+  </section>
 
-    <section class="two-col">
-      <div class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">COLLECTION</p>
-            <h2>Collection book</h2>
-          </div>
-        </div>
-        <div id="collectionBook" class="collection-book"></div>
-      </div>
+  <section class="panel">
+    <div class="section-head">
+      <div><p class="eyebrow">INVENTORY</p><h2>Your pulls</h2><p id="inventoryMeta">0 items</p></div>
+      <button id="sellAllBtn" class="ghost">Sell all</button>
+    </div>
+    <div id="inventory" class="inventory"></div>
+  </section>
 
-      <div class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">SHOP</p>
-            <h2>Boost sale value</h2>
-          </div>
-        </div>
-        <div class="upgrade-wrap">
-          <div>
-            <strong id="upgradeBoost">+0%</strong>
-            <span>sale bonus</span>
-          </div>
-          <button id="upgradeBtn" class="primary">Upgrade — $125</button>
-        </div>
+  <section class="panel">
+    <div class="section-head">
+      <div><p class="eyebrow">COLLECTION BOOK</p><h2>Discovered collectibles</h2></div>
+      <span id="collectionCount" class="pill">0 / 12</span>
+    </div>
+    <div id="collectionBook" class="collection-grid"></div>
+  </section>
 
-        <div class="goal-card">
-          <span>Empire goal</span>
-          <strong id="goalWorth">$150 / $10,000</strong>
-          <div class="meter"><div id="meterFill"></div></div>
-          <small id="progressText">0 boxes opened · 0 sold</small>
-        </div>
+  <section class="split">
+    <section class="panel">
+      <p class="eyebrow">SHOP BOOST</p><h2>Better buyers, bigger sales</h2>
+      <div class="upgrade">
+        <div><strong id="upgradeBoost">+0%</strong><span>sale bonus</span></div>
+        <button id="upgradeBtn" class="primary">Upgrade — $125</button>
       </div>
     </section>
-  </main>
-
-  <script src="game.js"></script>
+    <section class="panel">
+      <p class="eyebrow">EMPIRE GOAL</p><h2 id="goalWorth">$175 / $10,000</h2>
+      <div class="meter"><div id="meterFill"></div></div>
+      <p id="progressText">0 opened · 0 sold</p>
+    </section>
+  </section>
+</main>
+<script src="game.js"></script>
 </body>
 </html>
