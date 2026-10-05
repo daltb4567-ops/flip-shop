@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111827" />
+  <title>Flip Shop</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <p class="eyebrow">FLIP SHOP</p>
+        <h1>Build your flipping empire.</h1>
+      </div>
+      <button id="resetBtn" class="ghost">Reset</button>
+    </header>
+
+    <section class="stats">
+      <div class="card"><span>Cash</span><strong id="cash">$120</strong></div>
+      <div class="card"><span>Net worth</span><strong id="worth">$120</strong></div>
+      <div class="card"><span>Level</span><strong id="level">1</strong></div>
+      <div class="card"><span>Best pull</span><strong id="best">—</strong></div>
+    </section>
+
+    <section class="panel">
+      <h2>Stock drops</h2>
+      <p>Buy mystery stock, pull items, then sell or hold them.</p>
+
+      <div class="boxes">
+        <button class="box" data-box="street">
+          <b>📦 Street Box</b>
+          <span>$25</span>
+          <small>Best hit: ~$180</small>
+        </button>
+        <button class="box" data-box="collector">
+          <b>✨ Collector Box</b>
+          <span>$75</span>
+          <small>Best hit: ~$600</small>
+        </button>
+        <button class="box" data-box="vault">
+          <b>👑 Vault Box</b>
+          <span>$200</span>
+          <small>Best hit: ~$2,000</small>
+        </button>
+      </div>
+
+      <div id="reveal" class="reveal">
+        <span>Open your first box.</span>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Shop upgrade</h2>
+        <p>Each upgrade increases every sale price by 8%.</p>
+        <button id="upgradeBtn" class="primary">Upgrade — $125</button>
+      </div>
+
+      <div class="panel">
+        <h2>Progress</h2>
+        <p id="progressText">0 boxes opened · 0 items sold</p>
+        <div class="meter"><div id="meterFill"></div></div>
+        <small>Goal: $10,000 net worth</small>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="row">
+        <h2>Inventory</h2>
+        <button id="sellAllBtn" class="ghost">Sell all</button>
+      </div>
+      <div id="inventory" class="inventory"></div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
