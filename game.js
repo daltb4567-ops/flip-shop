@@ -1,28 +1,45 @@
 
+const SERIES_01=[
+ ["Chrome Buds","Common",8,19,36,"🎧","Tech","#9aa8ba","#4d596b"],
+ ["Pixel Pad","Uncommon",20,42,26,"🎮","Gaming","#57a3ff","#3459bd"],
+ ["Neon Relic","Rare",42,92,16,"💿","Collectibles","#9277ff","#5e42d7"],
+ ["Ghost Runner","Ultra",95,190,8,"👟","Fashion","#ee8cff","#8b4ad0"],
+ ["Pocket Deck","Common",9,21,34,"🃏","Collectibles","#94a3b8","#475569"],
+ ["Cassette Zero","Uncommon",23,48,23,"📼","Vintage","#65a9ff","#385a9f"],
+ ["Circuit Mouse","Common",7,18,36,"🖱️","Tech","#a6b1bf","#546171"],
+ ["Arcade Core","Uncommon",42,80,23,"🕹️","Gaming","#57a3ff","#3459bd"],
+ ["Prism Relic","Rare",75,155,34,"🔮","Collectibles","#a78bfa","#6647df"],
+ ["Signed Number 7","Ultra",155,325,24,"🏀","Sports","#f38fd7","#8a4fd0"],
+ ["Midnight Grail","Jackpot",330,650,7,"⌚","Vintage","#f6ca62","#9f7221"],
+ ["Silver Rookie","Uncommon",46,88,22,"🏒","Sports","#64b5ff","#3563ae"],
+ ["Neon Camera","Rare",84,165,18,"📷","Tech","#9f8aff","#5b46bb"],
+ ["Vinyl One","Rare",72,150,19,"💿","Vintage","#a98cff","#6746b5"],
+ ["Obsidian Relic","Rare",145,255,20,"🗿","Collectibles","#8f7aff","#4d42a9"],
+ ["Apex Timepiece","Ultra",230,500,35,"⌚","Luxury","#ee8cff","#6e4ccd"],
+ ["Golden Archive","Jackpot",520,1000,25,"🏆","Vintage","#ffd96a","#a77718"],
+ ["Zero-One Prototype","Mythic",1150,2100,7,"⚡","Mythic","#ff7994","#7e3658"],
+ ["Carbon Shades","Rare",135,260,18,"🕶️","Fashion","#9888ff","#5046a0"],
+ ["Platinum Cleats","Ultra",260,520,15,"⚽","Sports","#ef8cff","#7a46b0"],
+ ["First Press","Jackpot",560,1050,8,"🎵","Vintage","#ffd269","#a56d18"],
+ ["Nova Console","Ultra",245,495,16,"🎮","Gaming","#e78cff","#6f48b8"],
+ ["Crown Piece","Jackpot",620,1150,8,"💎","Luxury","#ffd968","#ac751e"],
+ ["Genesis Sample","Mythic",1300,2300,5,"🧬","Mythic","#ff768f","#733249"]
+];
+const STREET_NAMES=new Set(["Chrome Buds","Pixel Pad","Neon Relic","Ghost Runner","Pocket Deck","Cassette Zero","Circuit Mouse"]);
+const COLLECTOR_NAMES=new Set(["Arcade Core","Prism Relic","Signed Number 7","Midnight Grail","Silver Rookie","Neon Camera","Vinyl One","Nova Console"]);
+const VAULT_NAMES=new Set(["Obsidian Relic","Apex Timepiece","Golden Archive","Zero-One Prototype","Carbon Shades","Platinum Cleats","First Press","Crown Piece","Genesis Sample"]);
+function rowsFor(set){return SERIES_01.filter(r=>set.has(r[0]))}
 const BOXES={
- street:{cost:25,items:[
-  ["Chrome Buds","Common",8,19,40,"🎧","Tech","#9aa8ba","#4d596b"],
-  ["Pixel Pad","Uncommon",20,42,29,"🎮","Gaming","#57a3ff","#3459bd"],
-  ["Neon Relic","Rare",42,92,20,"💿","Collectibles","#9277ff","#5e42d7"],
-  ["Ghost Runner","Ultra",95,190,11,"👟","Fashion","#ee8cff","#8b4ad0"]]},
- collector:{cost:75,items:[
-  ["Arcade Core","Uncommon",42,80,24,"🕹️","Gaming","#57a3ff","#3459bd"],
-  ["Prism Relic","Rare",75,155,37,"🔮","Collectibles","#a78bfa","#6647df"],
-  ["Signed Number 7","Ultra",155,325,29,"🏀","Sports","#f38fd7","#8a4fd0"],
-  ["Midnight Grail","Jackpot",330,650,10,"⌚","Vintage","#f6ca62","#9f7221"]]},
- vault:{cost:200,items:[
-  ["Obsidian Relic","Rare",145,255,22,"🗿","Collectibles","#8f7aff","#4d42a9"],
-  ["Apex Timepiece","Ultra",230,500,39,"⌚","Luxury","#ee8cff","#6e4ccd"],
-  ["Golden Archive","Jackpot",520,1000,30,"🏆","Vintage","#ffd96a","#a77718"],
-  ["Zero-One Prototype","Mythic",1150,2100,9,"⚡","Mythic","#ff7994","#7e3658"]]}
+ street:{cost:25,items:rowsFor(STREET_NAMES)},
+ collector:{cost:75,items:rowsFor(COLLECTOR_NAMES)},
+ vault:{cost:200,items:rowsFor(VAULT_NAMES)}
 };
-const ALL=[...new Map(Object.values(BOXES).flatMap(b=>b.items).map(x=>[x[0],x])).values()];
-let state=load()||{cash:175,level:1,upgrades:0,opened:0,sold:0,best:0,nextId:1,inventory:[],discovered:[],claimed:[],lastDaily:null,market:{Tech:1,Gaming:1,Collectibles:1,Fashion:1,Sports:1,Vintage:1,Luxury:1,Mythic:1}};
-const $=id=>document.getElementById(id), money=n=>"$"+Math.round(n).toLocaleString();
+let state=load()||{cash:200,level:1,upgrades:0,opened:0,sold:0,best:0,nextId:1,inventory:[],discovered:[],claimed:[],lastDaily:null,market:{Tech:1,Gaming:1,Collectibles:1,Fashion:1,Sports:1,Vintage:1,Luxury:1,Mythic:1}};
+const $=id=>document.getElementById(id),money=n=>"$"+Math.round(n).toLocaleString();
 const MISSIONS=[
  {id:"open5",label:"Open 5 drops",reward:60,done:()=>state.opened>=5},
  {id:"sell5",label:"Sell 5 pulls",reward:80,done:()=>state.sold>=5},
- {id:"discover5",label:"Discover 5 collectibles",reward:110,done:()=>state.discovered.length>=5},
+ {id:"discover6",label:"Discover 6 Series 01 pulls",reward:125,done:()=>state.discovered.length>=6},
  {id:"worth1500",label:"Reach $1,500 net worth",reward:175,done:()=>netWorth()>=1500}
 ];
 function today(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`}
@@ -32,7 +49,7 @@ function marketMult(i){return state.market[i.category]||1}
 function saleValue(i){return Math.max(1,Math.round(i.value*saleMult()*marketMult(i)))}
 function netWorth(){return state.cash+state.inventory.reduce((s,i)=>s+saleValue(i),0)}
 function upgradeCost(){return 125+state.upgrades*175}
-function pick(table){const total=table.reduce((s,r)=>s+r[4],0);let roll=Math.random()*total;for(const r of table){roll-=r[4];if(roll<=0)return{name:r[0],rarity:r[1],value:Math.round(r[2]+Math.random()*(r[3]-r[2])),mark:r[5],category:r[6],c1:r[7],c2:r[8]}}}
+function pick(table){const total=table.reduce((s,r)=>s+r[4],0);let roll=Math.random()*total;for(const r of table){roll-=r[4];if(roll<=0)return{name:r[0],rarity:r[1],value:Math.round(r[2]+Math.random()*(r[3]-r[2])),mark:r[5],category:r[6],c1:r[7],c2:r[8]}}return null}
 function shiftMarket(){Object.keys(state.market).forEach(k=>state.market[k]=Math.min(1.34,Math.max(.72,state.market[k]+Math.random()*.18-.09)))}
 function serial(){return "#"+String(Math.floor(Math.random()*9999)+1).padStart(4,"0")}
 function rarityGlow(r){return {Common:"rgba(180,190,205,.24)",Uncommon:"rgba(87,163,255,.34)",Rare:"rgba(139,92,246,.45)",Ultra:"rgba(238,140,255,.5)",Jackpot:"rgba(247,198,75,.55)",Mythic:"rgba(255,107,134,.60)"}[r]}
@@ -40,7 +57,7 @@ function rarityGlow(r){return {Common:"rgba(180,190,205,.24)",Uncommon:"rgba(87,
 function openBox(type){
  const b=BOXES[type];if(state.cash<b.cost)return;
  state.cash-=b.cost;state.opened++;shiftMarket();
- const i=pick(b.items);i.id=state.nextId++;i.serial=serial();state.inventory.push(i);state.best=Math.max(state.best,i.value);
+ const i=pick(b.items);if(!i)return;i.id=state.nextId++;i.serial=serial();state.inventory.push(i);state.best=Math.max(state.best,i.value);
  if(!state.discovered.includes(i.name))state.discovered.push(i.name);
  const st=$("stage");st.className="stage";st.style.setProperty("--stageGlow",rarityGlow(i.rarity));void st.offsetWidth;st.classList.add("reveal","flash");
  st.innerHTML=`<div class="collect-card" style="--c1:${i.c1};--c2:${i.c2}">
@@ -48,7 +65,7 @@ function openBox(type){
     <div class="card-top"><span class="card-brand">FLIP SHOP // SERIES 01</span><span class="rarity rarity-${i.rarity}">${i.rarity}</span></div>
     <div class="art"><div class="art-icon">${i.mark}</div></div>
     <div class="card-name">${i.name}</div>
-    <div class="card-meta"><div><div class="card-value">${money(i.value)}</div><div class="card-category">${i.category}</div></div><div class="serial">${i.serial}<br>FOUND ${state.opened}</div></div>
+    <div class="card-meta"><div><div class="card-value">${money(i.value)}</div><div class="card-category">${i.category}</div></div><div class="serial">${i.serial}<br>S01-${String(SERIES_01.findIndex(r=>r[0]===i.name)+1).padStart(2,"0")}</div></div>
    </div></div>`;
  save();render()
 }
@@ -57,8 +74,8 @@ function sellAll(){if(!state.inventory.length)return;state.cash+=state.inventory
 function claimDaily(){if(!canDaily())return;const r=80+Math.floor(Math.random()*71);state.cash+=r;state.lastDaily=today();$("dailyStatus").textContent=`Claimed ${money(r)}. Nice.`;save();render()}
 function upgrade(){const c=upgradeCost();if(state.cash<c)return;state.cash-=c;state.upgrades++;state.level++;save();render()}
 function claimMission(id){const m=MISSIONS.find(m=>m.id===id);if(!m||!m.done()||state.claimed.includes(id))return;state.claimed.push(id);state.cash+=m.reward;save();render()}
-function save(){localStorage.setItem("flipShopSaveV4",JSON.stringify(state))}
-function load(){try{return JSON.parse(localStorage.getItem("flipShopSaveV4"))}catch{return null}}
+function save(){localStorage.setItem("flipShopSaveV5",JSON.stringify(state))}
+function load(){try{return JSON.parse(localStorage.getItem("flipShopSaveV5"))}catch{return null}}
 
 function renderMissions(){
  $("missions").innerHTML="";
@@ -79,9 +96,15 @@ function renderInventory(){
   const btn=document.createElement("button");btn.textContent=`Sell ${money(saleValue(i))}`;btn.addEventListener("click",()=>sellOne(i.id));card.append(btn);el.append(card)
  })
 }
-function renderCollection(){
- $("collectionCount").textContent=`${state.discovered.length} / ${ALL.length}`;
- $("collectionBook").innerHTML=ALL.map(r=>{const unlocked=state.discovered.includes(r[0]);return `<article class="collection-tile ${unlocked?"":"locked"}"><div class="collection-art" style="${unlocked?`background:linear-gradient(145deg,${r[7]},${r[8]})`:""}">${unlocked?r[5]:"?"}</div><b>${unlocked?r[0]:"Unknown pull"}</b><small>${unlocked?r[1]:"Keep ripping"}</small></article>`}).join("")
+function renderSet(){
+ const total=SERIES_01.length,found=state.discovered.length,pct=Math.round(found/total*100);
+ $("setCount").textContent=`${found} / ${total}`;$("setPercent").textContent=`${pct}% complete`;$("setMeter").style.width=pct+"%";
+ $("setGrid").innerHTML=SERIES_01.map((r,idx)=>{const foundIt=state.discovered.includes(r[0]);return `<article class="set-card ${foundIt?"":"missing"}">
+   <span class="set-num">S01-${String(idx+1).padStart(2,"0")}</span>
+   <div class="set-art" style="${foundIt?`--sc1:${r[7]};--sc2:${r[8]}`:""}">${foundIt?r[5]:""}</div>
+   <b>${foundIt?r[0]:"Unknown"}</b>
+   <small>${foundIt?r[1]:"Not discovered"}</small>
+ </article>`}).join("")
 }
 function render(){
  $("cash").textContent=money(state.cash);$("worth").textContent=money(netWorth());$("level").textContent=state.level;$("best").textContent=state.best?money(state.best):"—";$("openedCount").textContent=`${state.opened} opened`;
@@ -89,9 +112,10 @@ function render(){
  $("goalWorth").textContent=`${money(netWorth())} / $10,000`;$("meterFill").style.width=Math.min(100,netWorth()/10000*100)+"%";$("progressText").textContent=`${state.opened} opened · ${state.sold} sold`;
  document.querySelectorAll(".box").forEach(b=>b.disabled=state.cash<BOXES[b.dataset.box].cost);
  $("dailyBtn").disabled=!canDaily();$("dailyBtn").textContent=canDaily()?"Claim reward":"Claimed";if(!canDaily()&&!$("dailyStatus").textContent.startsWith("Claimed"))$("dailyStatus").textContent="Come back tomorrow for another drop.";
- renderMissions();renderMarket();renderInventory();renderCollection()
+ renderMissions();renderMarket();renderInventory();renderSet()
 }
 document.querySelectorAll(".box").forEach(b=>b.addEventListener("click",()=>openBox(b.dataset.box)));
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===t));document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+t.dataset.page));if(t.dataset.page==="sets")renderSet()}));
 $("dailyBtn").addEventListener("click",claimDaily);$("sellAllBtn").addEventListener("click",sellAll);$("upgradeBtn").addEventListener("click",upgrade);
-$("resetBtn").addEventListener("click",()=>{if(confirm("Reset Flip Shop V4 progress?")){localStorage.removeItem("flipShopSaveV4");location.reload()}});
+$("resetBtn").addEventListener("click",()=>{if(confirm("Reset Flip Shop V5 progress?")){localStorage.removeItem("flipShopSaveV5");location.reload()}});
 render();

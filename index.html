@@ -3,106 +3,136 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#080d18">
+  <meta name="theme-color" content="#070b14">
   <title>Flip Shop</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="ambient a1"></div>
+<div class="ambient a2"></div>
+<div class="ambient a3"></div>
+<div class="stars"></div>
+
 <main class="app">
   <header class="hero">
     <div>
       <p class="eyebrow">FLIP SHOP</p>
       <h1>Find it. Flip it. <span>Flex it.</span></h1>
-      <p class="sub">Crack drops, discover collectible variants, and build the ultimate shelf.</p>
+      <p class="sub">Crack drops, complete sets, and build the ultimate collection.</p>
     </div>
     <button id="resetBtn" class="ghost">↻ Reset</button>
   </header>
 
-  <section class="stats">
-    <article><small>Cash</small><strong id="cash">$175</strong></article>
-    <article><small>Net worth</small><strong id="worth">$175</strong></article>
-    <article><small>Shop level</small><strong id="level">1</strong></article>
-    <article><small>Best pull</small><strong id="best">—</strong></article>
-  </section>
+  <nav class="tabs" aria-label="Game sections">
+    <button class="tab active" data-page="shop">Shop</button>
+    <button class="tab" data-page="sets">Sets</button>
+  </nav>
 
-  <section class="daily">
-    <div>
-      <p class="eyebrow">DAILY DROP</p>
-      <h2>Today's freebie</h2>
-      <p id="dailyStatus">A little bankroll boost is waiting.</p>
-    </div>
-    <button id="dailyBtn" class="primary">Claim reward</button>
-  </section>
+  <section id="page-shop" class="page active">
+    <section class="stats">
+      <article><small>Cash</small><strong id="cash">$200</strong></article>
+      <article><small>Net worth</small><strong id="worth">$200</strong></article>
+      <article><small>Shop level</small><strong id="level">1</strong></article>
+      <article><small>Best pull</small><strong id="best">—</strong></article>
+    </section>
 
-  <section class="panel">
-    <div class="section-head">
-      <div><p class="eyebrow">STOCK ROOM</p><h2>Pick a drop</h2></div>
-      <span class="pill" id="openedCount">0 opened</span>
-    </div>
-
-    <div class="boxes">
-      <button class="box street" data-box="street">
-        <div class="crate-art"><span>FS</span></div>
-        <div><b>Street Drop</b><strong>$25</strong><small>Common → Ultra</small></div>
-      </button>
-      <button class="box collector" data-box="collector">
-        <div class="crate-art diamond">✦</div>
-        <div><b>Collector Drop</b><strong>$75</strong><small>Uncommon → Jackpot</small></div>
-      </button>
-      <button class="box vault" data-box="vault">
-        <div class="crate-art crown">♛</div>
-        <div><b>Vault Drop</b><strong>$200</strong><small>Rare → Mythic</small></div>
-      </button>
-    </div>
-
-    <div id="stage" class="stage">
-      <div class="stage-copy">
-        <span>READY TO RIP</span>
-        <h3>Choose a drop above</h3>
-        <p>Your pull will appear here.</p>
+    <section class="daily">
+      <div>
+        <p class="eyebrow">DAILY DROP</p>
+        <h2>Today's freebie</h2>
+        <p id="dailyStatus">A little bankroll boost is waiting.</p>
       </div>
-    </div>
-  </section>
-
-  <section class="split">
-    <section class="panel">
-      <div class="section-head"><div><p class="eyebrow">MISSIONS</p><h2>Quick wins</h2></div></div>
-      <div id="missions" class="stack"></div>
+      <button id="dailyBtn" class="primary">Claim reward</button>
     </section>
+
     <section class="panel">
-      <div class="section-head"><div><p class="eyebrow">MARKET</p><h2>Heat check</h2></div></div>
-      <div id="marketList" class="stack"></div>
-    </section>
-  </section>
+      <div class="section-head">
+        <div><p class="eyebrow">SERIES 01</p><h2>Pick a drop</h2></div>
+        <span class="pill" id="openedCount">0 opened</span>
+      </div>
 
-  <section class="panel">
-    <div class="section-head">
-      <div><p class="eyebrow">INVENTORY</p><h2>Your pulls</h2><p id="inventoryMeta">0 items</p></div>
-      <button id="sellAllBtn" class="ghost">Sell all</button>
-    </div>
-    <div id="inventory" class="inventory"></div>
-  </section>
+      <div class="boxes">
+        <button class="box street" data-box="street">
+          <div class="crate-art"><span>FS</span></div>
+          <div><b>Street Drop</b><strong>$25</strong><small>Common → Ultra</small></div>
+        </button>
+        <button class="box collector" data-box="collector">
+          <div class="crate-art diamond">✦</div>
+          <div><b>Collector Drop</b><strong>$75</strong><small>Uncommon → Jackpot</small></div>
+        </button>
+        <button class="box vault" data-box="vault">
+          <div class="crate-art crown">♛</div>
+          <div><b>Vault Drop</b><strong>$200</strong><small>Rare → Mythic</small></div>
+        </button>
+      </div>
 
-  <section class="panel">
-    <div class="section-head">
-      <div><p class="eyebrow">COLLECTION BOOK</p><h2>Discovered collectibles</h2></div>
-      <span id="collectionCount" class="pill">0 / 12</span>
-    </div>
-    <div id="collectionBook" class="collection-grid"></div>
-  </section>
-
-  <section class="split">
-    <section class="panel">
-      <p class="eyebrow">SHOP BOOST</p><h2>Better buyers, bigger sales</h2>
-      <div class="upgrade">
-        <div><strong id="upgradeBoost">+0%</strong><span>sale bonus</span></div>
-        <button id="upgradeBtn" class="primary">Upgrade — $125</button>
+      <div id="stage" class="stage">
+        <div class="stage-copy">
+          <span>READY TO RIP</span>
+          <h3>Choose a drop above</h3>
+          <p>Your Series 01 pull will appear here.</p>
+        </div>
       </div>
     </section>
+
+    <section class="split">
+      <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">MISSIONS</p><h2>Quick wins</h2></div></div>
+        <div id="missions" class="stack"></div>
+      </section>
+      <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">MARKET</p><h2>Heat check</h2></div></div>
+        <div id="marketList" class="stack"></div>
+      </section>
+    </section>
+
     <section class="panel">
-      <p class="eyebrow">EMPIRE GOAL</p><h2 id="goalWorth">$175 / $10,000</h2>
-      <div class="meter"><div id="meterFill"></div></div>
-      <p id="progressText">0 opened · 0 sold</p>
+      <div class="section-head">
+        <div><p class="eyebrow">INVENTORY</p><h2>Your pulls</h2><p id="inventoryMeta">0 items</p></div>
+        <button id="sellAllBtn" class="ghost">Sell all</button>
+      </div>
+      <div id="inventory" class="inventory"></div>
+    </section>
+
+    <section class="split">
+      <section class="panel">
+        <p class="eyebrow">SHOP BOOST</p><h2>Better buyers, bigger sales</h2>
+        <div class="upgrade">
+          <div><strong id="upgradeBoost">+0%</strong><span>sale bonus</span></div>
+          <button id="upgradeBtn" class="primary">Upgrade — $125</button>
+        </div>
+      </section>
+      <section class="panel">
+        <p class="eyebrow">EMPIRE GOAL</p><h2 id="goalWorth">$200 / $10,000</h2>
+        <div class="meter"><div id="meterFill"></div></div>
+        <p id="progressText">0 opened · 0 sold</p>
+      </section>
+    </section>
+  </section>
+
+  <section id="page-sets" class="page">
+    <section class="panel set-hero">
+      <div>
+        <p class="eyebrow">COLLECTION BINDER</p>
+        <h2>Series 01</h2>
+        <p>Every pull in the launch set. Missing cards stay hidden until you discover them.</p>
+      </div>
+      <div class="set-progress">
+        <strong id="setCount">0 / 24</strong>
+        <span>discovered</span>
+      </div>
+      <div class="meter"><div id="setMeter"></div></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">SERIES 01 CHECKLIST</p>
+          <h2>Your set</h2>
+        </div>
+        <span id="setPercent" class="pill">0% complete</span>
+      </div>
+      <div id="setGrid" class="set-grid"></div>
     </section>
   </section>
 </main>
